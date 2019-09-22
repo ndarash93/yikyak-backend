@@ -1,17 +1,25 @@
 const express = require('express');
 const app = express();
-const logger = require('./middleware');
+const https = require('https');
+const { logger, errLogger, CORS, Pool } = require('./middleware');
 const api = require('./api/index');
-
+const fs = require('fs');
+const mongoose = require('mongoose');
 const port = 27817;
 
 app.use(logger);
+app.use(errLogger);
+app.use(CORS);
+//app.use(testPool);
 app.use('/api', api);
 
 app.get('/', (req, res) => {
     res.send('Hellow World!');
 })
 
-app.listen(port, () => {
-    console.log(`Listening on PORT ${port}`);
+https.createServer({
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.cert')
+}, app).listen(port, _ => {
+    console.log(`Listening on port ${port}`);
 });
