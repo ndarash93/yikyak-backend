@@ -1,21 +1,25 @@
 const express = require('express');
 const app = express();
 const https = require('https');
-const { logger, errLogger, CORS, Pool } = require('./middleware');
+const { logger, errLogger, CORS, verify } = require('./middleware');
 const api = require('./api/index');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
 const port = 27817;
 
+app.use(bodyParser.json());
+app.use(verify);
 app.use(logger);
 app.use(errLogger);
 app.use(CORS);
-//app.use(testPool);
+
 app.use('/api', api);
 
 app.get('/', (req, res) => {
     res.send('Hellow World!');
-})
+});
 
 https.createServer({
     key: fs.readFileSync('./server.key'),

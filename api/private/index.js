@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const test = require('./test');
-const { pool } = require('/home/pi/Documents/cookingWithFriends/backend/middleware');
+const mongoose = require('mongoose');
 
 router.use('/test', test);
 

@@ -1,35 +1,19 @@
 const fs = require('fs');
-const { Pool } = require('pg')
-
-const poolConfig = {
-  host: 'localhost',
-  port: 5432,
-  database: 'cookingwithfriends',
-  user: 'nick',
-  password: 'pepsi1',
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-}
-
-const pool = new Pool(poolConfig);
-
-/*
-const testPool = (req, res, next) => {
-  req.pool = new Pool(poolConfig);
-  next();
-}
-*/
+const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+//const JwtStrategy = require('passport-jwt').Strategy
+//const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken');
 
 const logger = (req, res, next) => {
     const date = new Date();
     const domain = 'https://nickdarash.com';
 
     fs.appendFile(
-        '/home/pi/Documents/cookingWithFriends/logs/requests.log'
-        , `${date.toString()}: ${req.method} request from ${req.ip} for ${domain}${req.url}\n`
-        , (err) => {
-            if (err) throw err;
+        '/home/nick/Server/whatsForDinner/whatsForDinner-backend/Logs/requests.log', 
+        `${date.toString()}: ${req.method} request from ${req.ip} for ${domain}${req.url}\n`,
+        (err) => {
+            if (err) next(err);
     });
     next();
 }
@@ -39,8 +23,8 @@ const errLogger = (err, req, res, next) => {
     const domain = 'https://nickdarash.com';
 
     fs.appendFile(
-      '/home/pi/Documents/cookingWithFriends/logs/err.log', 
-      `${date.toString()}: err\n`
+      '/home/nick/Server/whatsForDinner/whatsForDinner-backend/Logs/error.log',
+      `${date.toString()}: ${err.message}\n`
     )
     next();
 }
@@ -51,10 +35,32 @@ const CORS = (req, res, next) => {
     next();
 }
 
+const verify = (req, res, next) => {
+  if(req.headers.jwt){
+    jwt.verify(req.headers.jwt, 'secret', (err, decoded) => {
+      console.log(req.headers.jwt);
+      if (err) { 
+        console.log(err.message);
+        res.status(401).json({
+          'errorMessage': err.message
+        });
+      }
+      else{
+        console.log(decoded);
+        req.body.auth = true;
+        req.body.id = decoded.id;
+        next();
+      }
+    });
+  }else{
+    req.body.auth = false;
+    next();
+  }
+}
+
 module.exports = {
     logger: logger,
     errLogger: errLogger,
-    Pool: pool,
-    //testPool: testPool,
+    verify: verify,
     CORS: CORS
 };
