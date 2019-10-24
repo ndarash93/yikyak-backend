@@ -4,13 +4,14 @@ const https = require('https');
 const { logger, errLogger, CORS, verify } = require('./middleware');
 const api = require('./api/index');
 const fs = require('fs');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const port = 27817;
 
+const db = require('./models/db').db
+
 app.use(bodyParser.json());
-app.use(verify);
+//app.use(verify);
 app.use(logger);
 app.use(errLogger);
 app.use(CORS);

@@ -1,19 +1,23 @@
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-//const JwtStrategy = require('passport-jwt').Strategy
-//const ExtractJwt = require('passport-jwt').ExtractJwt;
+const secret = require('./secret/secret');
 const jwt = require('jsonwebtoken');
+
+const logLocation = '/home/nick/Server/yikyak/backend/Logs/';
 
 const logger = (req, res, next) => {
     const date = new Date();
     const domain = 'https://nickdarash.com';
-
-    fs.appendFile(
-        '/home/nick/Server/whatsForDinner/whatsForDinner-backend/Logs/requests.log', 
-        `${date.toString()}: ${req.method} request from ${req.ip} for ${domain}${req.url}\n`,
-        (err) => {
-            if (err) next(err);
+    const fileLocation = logLocation + 'requests.log';
+    let logString = '';
+    if(req.body.id){
+      logString = `${date.toString()}: ${req.method} request from ${req.body.id} at ${req.ip} for ${domain}${req.url}\n`;
+    }else{
+      logString = `${date.toString()}: ${req.method} request from ${req.ip} for ${domain}${req.url}\n`;
+    }
+    fs.appendFile(fileLocation, logString, (err) => {
+      if (err) next(err);
     });
     next();
 }
@@ -23,7 +27,7 @@ const errLogger = (err, req, res, next) => {
     const domain = 'https://nickdarash.com';
 
     fs.appendFile(
-      '/home/nick/Server/whatsForDinner/whatsForDinner-backend/Logs/error.log',
+      logLocation + 'error.log',
       `${date.toString()}: ${err.message}\n`
     )
     next();
@@ -36,31 +40,23 @@ const CORS = (req, res, next) => {
 }
 
 const verify = (req, res, next) => {
-  if(req.headers.jwt){
-    jwt.verify(req.headers.jwt, 'secret', (err, decoded) => {
-      console.log(req.headers.jwt);
-      if (err) { 
-        console.log(err.message);
-        res.status(401).json({
-          'errorMessage': err.message
-        });
-      }
-      else{
-        console.log(decoded);
-        req.body.auth = true;
-        req.body.id = decoded.id;
-        next();
-      }
-    });
-  }else{
-    req.body.auth = false;
-    next();
-  }
+  jwt.verify(req.headers.jwt, secret, (err, decoded) => {
+    if (err) { 
+      res.status(401).json({
+        'errorMessage': err.message
+      });
+    }
+    else{
+      req.body.auth = true;
+      req.body.id = decoded.id;
+      next();
+    }
+  });
 }
 
 module.exports = {
-    logger: logger,
-    errLogger: errLogger,
-    verify: verify,
-    CORS: CORS
+  logger: logger,
+  errLogger: errLogger,
+  verify: verify,
+  CORS: CORS
 };

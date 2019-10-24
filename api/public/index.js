@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('../../middleware');
+const post = require('./posts/post');
 
 router.get('/', (req, res) => {
     res.json({
@@ -8,39 +8,7 @@ router.get('/', (req, res) => {
     })
 });
 
-router.get('/items', (req, res) => {
-    Pool.connect((err, client, release) => {
-        if (err) {
-            return console.log('Error acquiring client', err);
-        }else{
-            client.query('SELECT * FROM public.items', (err, result) => {
-                release();
-                if (err) {
-                    return console.log('Error Executing query', err);
-                }
-                res.json(result.rows);
-            })
-        }
-    })
-});
+router.use('/posts', post);
 
-/*
-router.get('/test', (req, res) => {
-    req.pool.connect(err, client, release) => {
-        if(err) {
-            return
-        }
-        client.query('SELECT * FROM public.items', (err, result) => {
-            release();
-            if(err) {
-                return
-            }
-            res.json(result.rows);
-        })
-        req.release();
-    }
-    res.json(result.rows);
-})
-*/
 
 module.exports = router;

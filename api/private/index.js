@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const { verify } = require('../../middleware');
 const test = require('./test');
 const mongoose = require('mongoose');
 
+router.use(verify);
 router.use('/test', test);
 
 router.get('/', (req, res) => {
