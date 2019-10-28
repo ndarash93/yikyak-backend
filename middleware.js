@@ -47,8 +47,9 @@ const verify = (req, res, next) => {
       });
     }
     else{
-      req.body.auth = true;
-      req.body.id = decoded.id;
+      req.auth = {};
+      req.auth.auth = true;
+      req.auth.id = decoded.id
       next();
     }
   });

@@ -46,7 +46,8 @@ router.post('/register', (req, res) => {
       if (err) return res.status(500).json({'error': 'An internal server error occurred'});
       const user = new User({
         email: req.body.email,
-        password: hash
+        password: hash,
+        date: new Date
       });
       user.save((err => {
         if (err) return res.status(500).json({'error': 'An internal server error occurred'});
@@ -54,7 +55,7 @@ router.post('/register', (req, res) => {
           'email': user.email,
           'id': user._id,
           'jwt': jwt.sign({
-            'username': user.username,
+            'email': user.email,
             'id': user._id,
             'iss': 'nickdarash.com'
           }, secret, {expiresIn: '365d'})
