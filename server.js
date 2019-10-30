@@ -22,9 +22,15 @@ app.get('/', (req, res) => {
     res.send('Hellow World!');
 });
 
+/*
 https.createServer({
     key: fs.readFileSync('./server.key'),
     cert: fs.readFileSync('./server.cert')
 }, app).listen(port, _ => {
+    console.log(`Listening on port ${port}`);
+});
+*/
+
+app.listen(port, _ => {
     console.log(`Listening on port ${port}`);
 });

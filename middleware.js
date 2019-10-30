@@ -34,25 +34,29 @@ const errLogger = (err, req, res, next) => {
 }
 
 const CORS = (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Header", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-}
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+};
 
 const verify = (req, res, next) => {
-  jwt.verify(req.headers.jwt, secret, (err, decoded) => {
-    if (err) { 
-      res.status(401).json({
-        'errorMessage': err.message
-      });
-    }
-    else{
-      req.auth = {};
-      req.auth.auth = true;
-      req.auth.id = decoded.id
-      next();
-    }
-  });
+  if(req.method === 'OPTIONS'){
+    res.status(200).json({message: 'Accepted'});
+  }else{ 
+    jwt.verify(req.headers.jwt, secret, (err, decoded) => {
+      if (err) { 
+        res.status(401).json({
+          'errorMessage': err.message
+        });
+      }
+      else{
+        req.auth = {};
+        req.auth.auth = true;
+        req.auth.id = decoded.id
+        next();
+      }
+    });
+  }
 }
 
 module.exports = {

@@ -15,24 +15,23 @@ router.use('/public', public);
 
 
 router.post('/auth', (req, res) => {
-  User.findOne({username: req.body.username}, (err, user) => {
+  User.findOne({email: req.body.email}, (err, user) => {
     if (err) return res.status(500).json({'error': 'An internal server error occurred'});
     bcrypt.compare(req.body.password, user.password, (err, result) => {
       if (err) return res.status(500).json({'error': 'An internal error occurred'});
       if (result) { 
         res.status(200).json({
-          'username': user.username,
-          'email': user.email,
-          'id': user._id,
-          'jwt': jwt.sign({
-            'username': user.username,
-            'id': user._id,
-            'iss': 'nickdarash.com'
+          email: user.email,
+          id: user._id,
+          jwt: jwt.sign({
+            email: user.email,
+            id: user._id,
+            iss: 'nickdarash.com'
           }, secret, {expiresIn: '365d'})
         });
       } else{
         res.status(401).json({
-          'message': 'Username or Password are incorrect'
+          'message': 'Email or Password are incorrect'
         });
       }
     });

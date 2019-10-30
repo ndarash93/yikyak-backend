@@ -6,8 +6,8 @@ const Post = mongoose.model('Post', require('../../../models/post'));
 
 
 router.get('/', (req, res) => {
-  Post.find({}, (err, result) => {
-    res.json({result: result});
+  Post.find({}, (err, posts) => {
+    res.json({posts: posts});
   });
 });
 
