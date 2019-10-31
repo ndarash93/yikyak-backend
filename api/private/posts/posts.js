@@ -45,7 +45,7 @@ router.put('/like', (req, res) => {
             if(userDislikeUpdateErr) throw userDislikeUpdateErr;
             user.updateOne({$push: {likedPosts: {post: dislikesArr[0].post}}}, (userLikeUpdateErr) => {
               if(userLikeUpdateErr) throw userLikeUpdateErr;
-              post.update({$inc: {likes: 2}}, (incErr) => {
+              post.updateOne({$inc: {likes: 2}}, (incErr) => {
                 if(incErr) throw incErr;
                 res.json({user: user, post: post, message: `Post ${post._id} liked`});
               });

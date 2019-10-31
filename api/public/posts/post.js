@@ -6,7 +6,15 @@ const Post = mongoose.model('Post', require('../../../models/post'));
 
 
 router.get('/', (req, res) => {
-  Post.find({}, (err, posts) => {
+  Post.find({}, ['_id', 'timeStamp', 'likes', 'text'],
+    {
+      skip: 0,
+      limit: 50,
+      sort: {
+        timeStamp: -1
+      }
+    },
+    (err, posts) => {
     res.json({posts: posts});
   });
 });
