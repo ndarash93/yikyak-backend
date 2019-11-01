@@ -7,6 +7,7 @@ const User = mongoose.model('User', require('../../../models/user'));
 
 router.post('/', (req, res) => {
   const post = new Post({
+    user: req.auth.id,
     text: req.body.postText,
     likes: 0,
     timeStamp: new Date,
@@ -31,8 +32,8 @@ router.delete('/', (req, res) => {
 });
 
 router.put('/like', (req, res) => {
-  User.findOne({_id: req.auth.id}, (userErr, user) => {
-    Post.findOne({_id: req.body.id}, (postErr, post) => {
+  User.findOne({_id: req.auth.id}, ['likedPosts', 'dislikedPosts'], (userErr, user) => {
+    Post.findOne({_id: req.body.id}, ['_id', 'timeStamp'], (postErr, post) => {
       if(post){
         let likesArr = user.likedPosts.filter((likedPost) => {
           return likedPost.post.equals(post._id);
@@ -43,11 +44,18 @@ router.put('/like', (req, res) => {
         if(dislikesArr.length){
           user.updateOne({$pull: {dislikedPosts: {post: dislikesArr[0].post}}}, (userDislikeUpdateErr) => {
             if(userDislikeUpdateErr) throw userDislikeUpdateErr;
-            user.updateOne({$push: {likedPosts: {post: dislikesArr[0].post}}}, (userLikeUpdateErr) => {
+            user.updateOne({$push: {likedPosts: {post: req.body.id, timeStamp: post.timeStamp}}}, (userLikeUpdateErr) => {
               if(userLikeUpdateErr) throw userLikeUpdateErr;
               post.updateOne({$inc: {likes: 2}}, (incErr) => {
                 if(incErr) throw incErr;
-                res.json({user: user, post: post, message: `Post ${post._id} liked`});
+                res.json({
+                  message: `Post ${post._id} liked`,
+                  post: {
+                    id: post._id,
+                    timeStamp: post.timeStamp,
+                    inc: 2
+                  }
+                });
               });
             });
           });
@@ -57,15 +65,29 @@ router.put('/like', (req, res) => {
               if(userLikeUpdateErr) throw userLikeUpdateErr;
               post.updateOne({$inc: {likes: -1}}, (incErr) => {
                 if(incErr) throw incErr;
-                res.json({user: user, post: post, message: `Post ${post._id} unliked`});
+                res.json({
+                  message: `Post ${post._id} unliked`,
+                  post: {
+                    id: post._id,
+                    timeStamp: post.timeStamp,
+                    inc: -1
+                  }
+                });
               });
             });
           }else{
-            user.updateOne({$push: {likedPosts: {post: req.body.id}}}, (userLikeUpdateErr) => {
+            user.updateOne({$push: {likedPosts: {post: req.body.id, timeStamp: post.timeStamp}}}, (userLikeUpdateErr) => {
               if(userLikeUpdateErr) throw userLikeUpdateErr;
               post.updateOne({$inc: {likes: 1}}, (incErr) => {
                 if(incErr) throw incErr;
-                res.json({user: user, post: post, message: `Post ${post._id} liked`});
+                res.json({
+                  message: `Post ${post._id} liked`,
+                  post: {
+                    id: post._id,
+                    timeStamp: post.timeStamp,
+                    inc: 1
+                  }
+                });
               });
             });
           }
@@ -78,8 +100,8 @@ router.put('/like', (req, res) => {
 });
 
 router.put('/dislike', (req, res) => {
-  User.findOne({_id: req.auth.id}, (userErr, user) => {
-    Post.findOne({_id: req.body.id}, (postErr, post) => {
+  User.findOne({_id: req.auth.id}, ['likedPosts', 'dislikedPosts'], (userErr, user) => {
+    Post.findOne({_id: req.body.id}, ['_id', 'timeStamp'], (postErr, post) => {
       if(post){
         let likesArr = user.likedPosts.filter((likedPost) => {
           return likedPost.post.equals(post._id);
@@ -88,44 +110,49 @@ router.put('/dislike', (req, res) => {
           return dislikedPost.post.equals(post._id);
         });
         if(likesArr.length){
-          user.updateOne({$pull: {likedPosts: {post: likesArr[0].post}}}, (userUpdateErr) => {
+          user.updateOne({$pull: {likedPosts: {post: likesArr[0].post}}, $push: {dislikedPosts: {post: req.body.id, timeStamp: post.timeStamp}}}, (userUpdateErr) => {
             if (userUpdateErr) throw userUpdateErr;
-            post.updateOne({$inc: {likes: -1}}, (incErr) => {
+            post.updateOne({$inc: {likes: -2}}, (incErr) => {
               if(incErr) throw incErr;
+              res.json({
+                message: `Post ${post._id} disliked`,
+                post: {
+                  id: post._id,
+                  timeStamp: post.timeStamp,
+                  inc: -2
+                }
+              });
             });
           });
-          if(dislikesArr.length){
-            user.updateOne({$pull: {dislikedPosts: {post: dislikesArr[0].post}}}, (userDislikeUpdateErr) => {
-              if(userDislikeUpdateErr) throw userDislikeUpdateErr;
-              post.updateOne({$inc: {likes: 1}}, (incErr) => {
-                if(incErr) throw incErr;
-                res.json({post: post, user: user, message: `Post ${post._id} undisliked.`});
-              });
-            });
-          }else{
-            user.updateOne({$push: {dislikedPosts: {post: req.body.id}}}, (userDislikeUpdateErr) => {
-              if(userDislikeUpdateErr) throw userDislikeUpdateErr;
-              post.updateOne({$inc: {likes: -1}}, (incErr) => {
-                if(incErr) throw incErr;
-                res.json({post: post, user: user, message: `Post ${post._id} disliked.`});
-              });
-            });
-          }
         }else{
           if(dislikesArr.length){
             user.updateOne({$pull: {dislikedPosts: {post: dislikesArr[0].post}}}, (userDislikeUpdateErr) => {
               if(userDislikeUpdateErr) throw userDislikeUpdateErr;
               post.updateOne({$inc: {likes: 1}}, (incErr) => {
                 if(incErr) throw incErr;
-                res.json({post: post, user: user, message: `Post ${post._id} undisliked.`});
+                res.json({
+                  message: `Post ${post._id} undisliked`,
+                  post: {
+                    id: post._id,
+                    timeStamp: post.timeStamp,
+                    inc: 1
+                  }
+                });  
               });
             });
           }else{
-            user.updateOne({$push: {dislikedPosts: {post: req.body.id}}}, (userDislikeUpdateErr) => {
+            user.updateOne({$push: {dislikedPosts: {post: req.body.id, timeStamp: post.timeStamp}}}, (userDislikeUpdateErr) => {
               if(userDislikeUpdateErr) throw userDislikeUpdateErr;
               post.updateOne({$inc: {likes: -1}}, (incErr) => {
                 if(incErr) throw incErr;
-                res.json({post: post, user: user, message: `Post ${post._id} disliked.`});
+                res.json({
+                  message: `Post ${post._id} disliked`,
+                  post: {
+                    id: post._id,
+                    timeStamp: post.timeStamp,
+                    inc: -1
+                  }
+                });
               });
             });
           }
