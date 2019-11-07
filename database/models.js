@@ -4,8 +4,13 @@ const postSchema = mongoose.Schema({
   user: mongoose.Schema.Types.ObjectId,
   text: String,
   likes: Number,
+  dislikes: Number,
   timeStamp: { type: Date, default: new Date },
   location: String
 });
 
-module.exports = postSchema;
+const model = Object.freeze({
+  Post: mongoose.model('Post', postSchema)
+})
+
+module.exports = model;
