@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 const { Post } = require('./models');
+const buildMakeDbFunction = require('./functions');
+
+const dbFunctions = buildMakeDbFunction();
+const insertPost = dbFunctions.makeInsertPost(Post);
+const getPost = dbFunctions.makeGetPost(Post);
 
 mongoose.connect('mongodb://127.0.0.1:27017/yikyak-clean', { 
   useNewUrlParser: true,
@@ -20,11 +25,7 @@ db.on('disconnected', _ => {
   console.log('Disconnected');
 });
 
-const insert = async function(postInfo){
-  const post = new Post({...postInfo});
-  return await post.save();
-}
-
 module.exports = Object.freeze({
-  insert
+  insertPost,
+  getPost
 })

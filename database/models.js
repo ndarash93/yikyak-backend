@@ -9,8 +9,16 @@ const postSchema = mongoose.Schema({
   location: String
 });
 
+const userSchema = mongoose.Schema({
+  phoneNumber: String,
+  posts: [{type: mongoose.Schema.Types.ObjectId}],
+  likedPosts: [{type: mongoose.Schema.Types.ObjectId}],
+  dislikedPosts: [{type: mongoose.Schema.Types.ObjectId}],
+})
+
 const model = Object.freeze({
-  Post: mongoose.model('Post', postSchema)
+  Post: mongoose.model('Post', postSchema),
+  User: mongoose.model('User', userSchema)
 })
 
 module.exports = model;

@@ -12,8 +12,8 @@ const controller = Object.freeze({
     likePost
   },
   user: {
-    addUser
+    //addUser
   }
 })
 
-module.exports = postController;
+module.exports = controller;
