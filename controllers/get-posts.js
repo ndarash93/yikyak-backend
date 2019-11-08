@@ -1,14 +1,13 @@
-module.exports = function makeGetPost(useGetPost) {
-  return async function addPost(httpRequest){
+module.exports = function makeGetPosts(useGetPosts) {
+  return async function getPosts(httpRequest){
     try{
-      const post = await useGetPost(httpRequest);
+      const posts = await useGetPosts(httpRequest);
       return {
         headers: {
-          'Content-Type': 'application/json',
-          'Last-Modified': new Date(posted.modifiedOn).toUTCString()
+          'Content-Type': 'application/json'
         },
-        statusCode: 201,
-        body: { post }
+        statusCode: 200,
+        body: { posts }
       }
     }
     catch (e) {

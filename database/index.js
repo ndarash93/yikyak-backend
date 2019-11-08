@@ -5,6 +5,7 @@ const buildMakeDbFunction = require('./functions');
 const dbFunctions = buildMakeDbFunction();
 const insertPost = dbFunctions.makeInsertPost(Post);
 const getPost = dbFunctions.makeGetPost(Post);
+const getPosts = dbFunctions.makeGetPosts(Post, 50);
 
 mongoose.connect('mongodb://127.0.0.1:27017/yikyak-clean', { 
   useNewUrlParser: true,
@@ -27,5 +28,6 @@ db.on('disconnected', _ => {
 
 module.exports = Object.freeze({
   insertPost,
+  getPosts,
   getPost
 })
