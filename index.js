@@ -9,6 +9,7 @@ const PORT = 27817;
 
 app.post('/add-post', makeCallBack(controller.post.addPost));
 app.get('/like-post', makeCallBack(controller.post.likePost));
+app.get('/get-post', makeCallBack(controller.post.getPost));
 
 app.listen(PORT, () => {
   console.log(`Listening at port ${PORT}`)
