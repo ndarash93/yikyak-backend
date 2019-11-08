@@ -1,5 +1,5 @@
-module.exports = function makeGetPost(getPost) {
+module.exports = function makeGetPost(dbGetPost) {
   return async function getPost(httpRequest){
-    return await getPost(httpRequest.params.id);
+    return await dbGetPost(httpRequest.query.id);
   }
 }

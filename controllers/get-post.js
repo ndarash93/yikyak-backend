@@ -5,9 +5,9 @@ module.exports = function makeGetPost(useGetPost) {
       return {
         headers: {
           'Content-Type': 'application/json',
-          'Last-Modified': new Date(posted.modifiedOn).toUTCString()
+          'Last-Modified': new Date(post.timeStamp).toUTCString()
         },
-        statusCode: 201,
+        statusCode: 200,
         body: { post }
       }
     }
