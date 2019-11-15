@@ -28,9 +28,44 @@ module.exports = function buildMakeFunctions(){
     }
   }
 
+const makeIncPostLikes = function(Post){
+  return async function incPostLikes(id, inc){
+    const post = await Post.findOneAndUpdate({_id: id}, {likes: {$inc: inc}}, {new: true})
+    return post;
+  }
+}
+
+const makeAddPostToLikedPosts = function(User){
+  return async function addPostToLikedPosts(postId, userId){
+    return await User.updateOne({_id: userId}, {new: true}, {$push: {likedPosts: postId}})
+  }
+}
+
+const makeRemovePostFromLikedPosts = function(User){
+  return async function removePostFromLikedPosts(postId, userId){
+    return await User.updateOne({_id: userId}, {new: true}, {$pull: {likedPosts: postId}})
+  }
+}
+
+const makeVerifyPostLiked = function(User){
+  return async function verifyPostLiked(postId, userId){
+    const user = await User.findOne({_id: userId}, ['likedPosts']);
+    const likedPosts = user.likedPosts.filter(likedPost => {
+      return likedPost.post.equals(postId);
+    });
+    return likedPosts.length ? true : false;
+  }
+}
+
+
+
   return Object.freeze({
     makeInsertPost,
     makeGetPost,
-    makeGetPosts
+    makeGetPosts,
+    makeIncPostLikes,
+    makeAddPostToLikedPosts,
+    makeVerifyPostLiked,
+    makeRemovePostFromLikedPosts
   });
 }
