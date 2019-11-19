@@ -1,13 +1,12 @@
 module.exports = function makeAuthUser(useAuthUser) {
-  return async function addPost(postInfo){
+  return async function authUser(userInfo){
     try{
       const user = await useAuthUser(userInfo)
       return {
         headers: {
-          'Content-Type': 'application/json',
-          'Last-Modified': new Date(posted.modifiedOn).toUTCString()
+          'Content-Type': 'application/json'
         },
-        statusCode: 201,
+        statusCode: 200,
         body: {
           user
         }

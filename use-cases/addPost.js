@@ -1,6 +1,4 @@
-const {makePost} = require('../entities');
-
-module.exports = function makeAddPost(insert) {
+module.exports = function makeAddPost(insert, makePost) {
   return async function addPost(postInfo){
     const post = makePost(postInfo.body);
     return await insert({
