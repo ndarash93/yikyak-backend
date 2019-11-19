@@ -2,16 +2,17 @@ const express = require('express');
 const makeCallBack = require('./express-callback');
 const controller = require('./controllers');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
-const PORT = 27817;
 
 app.post('/add-post', makeCallBack(controller.post.addPost));
 app.get('/like-post', makeCallBack(controller.post.likePost));
 app.get('/get-post', makeCallBack(controller.post.getPost));
 app.get('/get-posts', makeCallBack(controller.post.getPosts));
 
-app.listen(PORT, () => {
-  console.log(`Listening at port ${PORT}`)
-})
+app.listen(process.env.API_PORT, () => {
+  console.log(`Listening internally at ${process.env.INTERNAL_API_HOST}:${process.env.API_PORT}`);
+  console.log(`Listening on network at ${process.env.EXTERNAL_API_HOST}:${process.env.API_PORT}`);
+});

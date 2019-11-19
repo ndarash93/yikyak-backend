@@ -15,7 +15,7 @@ const controller = Object.freeze({
     addPost,
     likePost,
     getPost,
-    getposts
+    getPosts
   },
   user: {
     //addUser
