@@ -1,14 +1,18 @@
 const db = require('../database');
+const crypto = require('../crypto');
 const makeAddPost = require('./addPost');
 const makeLikePost = require('./likePost');
 const makeGetPost = require('./getPost');
 
 const makeAddUser = require('./addUser');
+const makeAuthUser = require('./authUser');
 
 const addPost = makeAddPost(db.insertPost);
 const likePost = makeLikePost(db.like);
 const getPost = makeGetPost(db.getPost);
 const addUser = makeAddUser(db.insertUser);
+const authUser = makeAuthUser(db.getUser, crypto.compare);
+
 
 module.exports = Object.freeze({
   post: {
@@ -17,6 +21,7 @@ module.exports = Object.freeze({
     getPost
   },
   user: {
-    addUser
+    addUser,
+    authUser
   }
 });

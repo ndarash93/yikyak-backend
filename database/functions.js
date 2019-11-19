@@ -57,7 +57,14 @@ const makeVerifyPostLiked = function(User){
   }
 }
 
-
+const makeGetUser = function(User){
+  return async function getUser({username, phoneNumber}){
+    if(username){
+      return await User.findOne({username: username});
+    }
+    return await User.findOne({phoneNumber: phoneNumber});
+  }
+}
 
   return Object.freeze({
     makeInsertPost,
@@ -66,6 +73,9 @@ const makeVerifyPostLiked = function(User){
     makeIncPostLikes,
     makeAddPostToLikedPosts,
     makeVerifyPostLiked,
-    makeRemovePostFromLikedPosts
+    makeRemovePostFromLikedPosts,
+    user: {
+      makeGetUser
+    }
   });
 }
