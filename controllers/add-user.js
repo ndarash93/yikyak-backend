@@ -1,7 +1,7 @@
 module.exports = function makeAddUser(useAddUser) {
   return async function addUser(userInfo){
     try{
-      const user = await useAddUser(userInfo)
+      const user = await useAddUser(userInfo);
       return {
         headers: {
           'Content-Type': 'application/json'

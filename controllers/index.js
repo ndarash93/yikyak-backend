@@ -14,7 +14,7 @@ const getPosts = makeGetPosts(service.post.getPosts);
 
 const addUser = makeAddUser(service.user.addUser);
 
-const controller = Object.freeze({
+module.exports = Object.freeze({
   post: {
     addPost,
     likePost,
@@ -24,6 +24,4 @@ const controller = Object.freeze({
   user: {
     addUser
   }
-})
-
-module.exports = controller;
+});

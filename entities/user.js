@@ -29,9 +29,11 @@ module.exports = function makeUser({
 }
 
 function verifyPhoneNumber(number){
-  return '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'.test(number);
+  const regex = new RegExp('^[0-9]{3}-[0-9]{3}-[0-9]{4}$');
+  return regex.test(number);
 }
 
 function verifyEmail(email){
-  return '^.*@.*\..*$'.test(email);
+  const regex = new RegExp('^.*@.*\..*$');
+  return regex.test(email);
 }
