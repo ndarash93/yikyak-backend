@@ -8,8 +8,9 @@ const getPost = dbFunctions.makeGetPost(Post);
 const getPosts = dbFunctions.makeGetPosts(Post, 50);
 
 const insertUser = dbFunctions.user.makeInsertUser(User);
+const getUser = dbFunctions.user.makeGetUser(User);
 
-mongoose.connect('mongodb://127.0.0.1:27017/yikyak-clean', { 
+mongoose.connect(`${process.env.DB_HOST}${process.env.DB_NAME}`, { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false
@@ -22,7 +23,7 @@ db.on('error', (err) => {
   console.log(err);
 });
 db.on('open', _ => {
-  console.log(`mongodb://127.0.0.1:27017/yikyak connected`);
+  console.log(`${process.env.DB_HOST}${process.env.DB_NAME}`);
 });
 db.on('disconnected', _ => {
   console.log('Disconnected');
@@ -32,5 +33,6 @@ module.exports = Object.freeze({
   insertPost,
   getPosts,
   getPost,
-  insertUser
-})
+  insertUser,
+  getUser
+});

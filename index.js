@@ -1,8 +1,8 @@
 const express = require('express');
+require('dotenv').config();
 const makeCallBack = require('./express-callback');
 const controller = require('./controllers');
 const bodyParser = require('body-parser');
-require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());

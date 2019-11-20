@@ -13,7 +13,7 @@ const addPost = makeAddPost(db.insertPost, makePost);
 const likePost = makeLikePost(db.like);
 const getPost = makeGetPost(db.getPost);
 
-const addUser = makeAddUser(db.insertUser, makeUser);
+const addUser = makeAddUser(db.insertUser, makeUser, db.getUser);
 const authUser = makeAuthUser(db.getUser, crypto.compare);
 
 module.exports = Object.freeze({

@@ -8,7 +8,8 @@ module.exports = function makeAddUser(useAddUser) {
         },
         statusCode: 201,
         body: {
-          user
+          phoneNumber: user.phoneNumber,
+          id: user._id
         }
       }
     }
