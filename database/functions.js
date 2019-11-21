@@ -60,6 +60,8 @@ function makeVerifyPostLiked(User){
 function makeInsertUser(User) {
   return async function({
     phoneNumber,
+    email,
+    password,
     dateCreated,
     dislikes,
     likes,
@@ -67,6 +69,8 @@ function makeInsertUser(User) {
   }){
     const user = new User({
       phoneNumber: phoneNumber,
+      email: email,
+      password: password,
       dateCreated: dateCreated,
       dislikes: dislikes,
       likes: likes,

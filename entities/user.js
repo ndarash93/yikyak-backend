@@ -19,6 +19,12 @@ module.exports = function makeUser({
     //throw new Error('Email is invalid');
   }
 
+  if(email){
+    
+  }
+
+  
+
   return Object.freeze({
     getPhoneNumber: () => {return user.phoneNumber},
     getDateCreated: () => {return user.dateCreated},
