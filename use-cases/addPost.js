@@ -1,6 +1,8 @@
-module.exports = function makeAddPost(insert, makePost) {
+module.exports = function makeAddPost(insert, makePost, getUser) {
   return async function addPost(postInfo){
-    const post = makePost(postInfo.body);
+    const user = await getUser(postInfo.body);
+
+    const post = makePost(postInfo.body, user);
     return await insert({
       user: post.getAuthor(),
       timeStamp: post.getTimeStamp(),

@@ -1,6 +1,6 @@
-module.exports = function makePost(postInfo){
+module.exports = function makePost(postInfo, user){
   const post = {
-    author: postInfo.user,
+    author: user._id,
     timeStamp: new Date(),
     text: postInfo.text,
     likes: 0,
