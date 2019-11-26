@@ -25,12 +25,23 @@ function makeSign(secret, expiresIn) {
   };
 }
 
+function makeVerify(secret) {
+  return function(token) {
+    return jwt.verify(token, secret);
+  };
+}
+
 const signAccess = makeSign(process.env.ACCESS_TOKEN_SECRET, "1h");
 const signRefresh = makeSign(process.env.REFRESH_TOKEN_SECRET, "5d");
+
+const verifyAccess = makeVerify(process.env.ACCESS_TOKEN_SECRET);
+const verifyRefresh = makeVerify(process.env.REFRESH_TOKEN_SECRET);
 
 module.exports = {
   signAccess,
   signRefresh,
-  compare: compare,
-  hash: hash
+  compare,
+  hash,
+  verifyAccess,
+  verifyRefresh
 };
