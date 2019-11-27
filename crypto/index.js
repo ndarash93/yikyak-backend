@@ -11,13 +11,13 @@ async function hash(password) {
 }
 
 function makeSign(secret, expiresIn) {
-  return function sign(userData) {
+  return function sign({_id, phoneNumber}) {
     return jwt.sign(
       {
         iss: process.env.HOST,
         iat: Date.now(),
-        id: userData._id,
-        phoneNumber: userData.phoneNumber
+        id: _id,
+        phoneNumber: phoneNumber
       },
       secret,
       { expiresIn: expiresIn }

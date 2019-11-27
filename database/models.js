@@ -14,6 +14,7 @@ const userSchema = mongoose.Schema({
   posts: [{type: mongoose.Schema.Types.ObjectId}],
   likedPosts: [{type: mongoose.Schema.Types.ObjectId}],
   dislikedPosts: [{type: mongoose.Schema.Types.ObjectId}],
+  refreshToken: String
 })
 
 const model = Object.freeze({
