@@ -6,12 +6,11 @@ async function compare(password, hash) {
 }
 
 async function hash(password) {
-  const salt = await bcrypt.getSalt(12);
-  return await bcrypt.hash(password, salt);
+  return await bcrypt.hash(password, 12);
 }
 
 function makeSign(secret, expiresIn) {
-  return function sign({_id, phoneNumber}) {
+  return function sign({ _id, phoneNumber }) {
     return jwt.sign(
       {
         iss: process.env.HOST,
@@ -26,7 +25,7 @@ function makeSign(secret, expiresIn) {
 }
 
 function makeVerify(secret) {
-  return function(token) {
+  return function verify(token) {
     return jwt.verify(token, secret);
   };
 }

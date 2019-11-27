@@ -1,9 +1,7 @@
 module.exports = function makeAddUser(useAddUser) {
   return async function addUser(userInfo) {
     try {
-      const user = await useAddUser(userInfo);
-      const accessToken = getToken();
-      const refreshToken = getToken();
+      const { user, accessToken, refreshToken } = await useAddUser(userInfo);
       return {
         headers: {
           "Content-Type": "application/json"
@@ -16,7 +14,7 @@ module.exports = function makeAddUser(useAddUser) {
           refreshToken: refreshToken
         }
       };
-    } catch ({ statusCode = 400, ...e }) {
+    } catch ({ code = 500, message = "An Internal Error Occurred", ...e }) {
       // TODO: Error logging
       //console.log(e)
 
@@ -24,9 +22,9 @@ module.exports = function makeAddUser(useAddUser) {
         headers: {
           "Content-Type": "application/json"
         },
-        statusCode: statusCode,
+        statusCode: code,
         body: {
-          error: e.message
+          error: message
         }
       };
     }
