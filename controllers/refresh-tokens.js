@@ -1,7 +1,7 @@
 module.exports = function makeRefreshTokens(useRefreshToken) {
   return async function refreshTokens(info) {
     try {
-      const tokens = await useRefreshToken(info);
+      const tokens = await useRefreshToken(info.body);
       return {
         headers: {
           "Content-Type": "application/json"
