@@ -91,10 +91,13 @@ module.exports = function buildMakeFunctions() {
 
   function makeGetUser(User) {
     return async function getUser({ _id, phoneNumber }) {
+      let user;
       if (_id) {
-        return await User.findOne({ _id: _id });
+        user = await User.findOne({ _id: _id });
+      }else if(phoneNumber){
+        user = await User.findOne({ phoneNumber: phoneNumber });
       }
-      return await User.findOne({ phoneNumber: phoneNumber });
+      return user;
     };
   }
 

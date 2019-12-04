@@ -15,7 +15,7 @@ function makeSign(secret, expiresIn) {
       {
         iss: process.env.HOST,
         iat: Date.now(),
-        id: _id,
+        _id: _id,
         phoneNumber: phoneNumber
       },
       secret,

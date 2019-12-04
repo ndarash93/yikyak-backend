@@ -1,32 +1,34 @@
 module.exports = function makeRefreshTokens(
-  { signAccess, signRefresh, compare, decode },
-  { findUser, updateUserToken }
+  { signAccess, signRefresh, compare, verifyRefresh, hash },
+  { getUser, updateUserToken }
 ) {
   return async function refreshTokens({ refreshToken }) {
-    console.log("test");
-    const tokenData = decode(refreshToken);
-    const user = await findUser(tokenData.id);
+    const tokenData = verifyRefresh(refreshToken);
+    const user = await getUser(tokenData);
+    const tokensMatch = await compare(refreshToken, user.token);
+
     if (!user) {
       const error = new Error("Token Data Invalid");
       error.code = 403;
       throw error;
     }
-    const accessToken = signAccess(user);
-    const refreshToken = signRefresh(user);
 
-    if (!compare(refreshToken, user.token)) {
-      const error = new Error("Token Data Invalid");
+    if(!tokensMatch){
+      const error = new Error('Token Data Does Not Match');
       error.code = 403;
       throw error;
     }
+    
+    const accessToken = signAccess(user);
+    const newRefreshToken = signRefresh(user);
 
-    await updateUserToken(refreshToken, user);
+    await updateUserToken(await hash(newRefreshToken), user);
 
     return Object.freeze({
       id: user._id,
       phoneNumber: user.phoneNumber,
       accessToken: accessToken,
-      refreshToken: refreshToken
+      refreshToken: newRefreshToken
     });
   };
 };

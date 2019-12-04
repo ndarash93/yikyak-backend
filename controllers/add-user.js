@@ -9,12 +9,12 @@ module.exports = function makeAddUser(useAddUser) {
         statusCode: 201,
         body: {
           phoneNumber: user.phoneNumber,
-          id: user._id,
+          _id: user._id,
           accessToken: accessToken,
           refreshToken: refreshToken
         }
       };
-    } catch ({ code = 500, message = "An Internal Error Occurred", ...e }) {
+    } catch ({ message = "An Internal Error Occurred", ...e }) {
       // TODO: Error logging
       //console.log(e)
 
@@ -22,7 +22,7 @@ module.exports = function makeAddUser(useAddUser) {
         headers: {
           "Content-Type": "application/json"
         },
-        statusCode: code,
+        statusCode: e.code,
         body: {
           error: message
         }
