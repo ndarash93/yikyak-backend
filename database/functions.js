@@ -31,15 +31,15 @@ module.exports = function buildMakeFunctions() {
     return async function incPostLikes(id, inc) {
       const post = await Post.findOneAndUpdate(
         { _id: id },
-        { likes: { $inc: inc } },
+        { $inc: { likes: inc } },
         { new: true }
       );
       return post;
     };
   }
 
-  function makeAddPostToLikedPosts(User) {
-    return async function addPostToLikedPosts(postId, userId) {
+  function makeAddPostToLikes(User) {
+    return async function addPostToLikes(postId, userId) {
       return await User.updateOne(
         { _id: userId },
         { new: true },
@@ -48,12 +48,22 @@ module.exports = function buildMakeFunctions() {
     };
   }
 
-  function makeRemovePostFromLikedPosts(User) {
-    return async function removePostFromLikedPosts(postId, userId) {
+  function makeRemovePostFromLikes(User) {
+    return async function removePostFromLikes(postId, userId) {
       return await User.updateOne(
         { _id: userId },
         { new: true },
         { $pull: { likedPosts: postId } }
+      );
+    };
+  }
+
+  function makeRemovePostFromDislikes(User) {
+    return async function removePostFromDislikes(postId, userId) {
+      return await User.updateOne(
+        { _id: userId },
+        { new: true },
+        { $pull: { dislikedPosts: postId } }
       );
     };
   }
@@ -65,6 +75,16 @@ module.exports = function buildMakeFunctions() {
         return likedPost.post.equals(postId);
       });
       return likedPosts.length ? true : false;
+    };
+  }
+
+  function makeVerifyPostDisliked(User) {
+    return async function verifyPostDisliked(postId, userId) {
+      const user = await User.findOne({ _id: userId }, ["dislikedPosts"]);
+      const dislikedPosts = user.dislikedPosts.filter(dislikedPost => {
+        return dislikedPost.post.equals(postId);
+      });
+      return dislikedPosts.length ? true : false;
     };
   }
 
@@ -94,7 +114,7 @@ module.exports = function buildMakeFunctions() {
       let user;
       if (_id) {
         user = await User.findOne({ _id: _id });
-      }else if(phoneNumber){
+      } else if (phoneNumber) {
         user = await User.findOne({ phoneNumber: phoneNumber });
       }
       return user;
@@ -112,9 +132,11 @@ module.exports = function buildMakeFunctions() {
     makeGetPost,
     makeGetPosts,
     makeIncPostLikes,
-    makeAddPostToLikedPosts,
+    makeAddPostToLikes,
     makeVerifyPostLiked,
-    makeRemovePostFromLikedPosts,
+    makeVerifyPostDisliked,
+    makeRemovePostFromLikes,
+    makeRemovePostFromDislikes,
     user: {
       makeInsertUser,
       makeGetUser,
