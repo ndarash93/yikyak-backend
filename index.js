@@ -9,7 +9,8 @@ const app = express();
 app.use(bodyParser.json());
 
 app.post("/add-post", protectRoute, makeCallBack(controller.post.addPost));
-app.get("/like-post", protectRoute, makeCallBack(controller.post.likePost));
+app.post("/like-post", protectRoute, makeCallBack(controller.post.likePost));
+app.post('/dislike-post', protectRoute, makeCallBack(controller.post.dislikePost))
 app.get("/get-post", makeCallBack(controller.post.getPost));
 app.get("/get-posts", makeCallBack(controller.post.getPosts));
 

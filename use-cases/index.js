@@ -12,7 +12,7 @@ const makeAuthUser = require("./authUser");
 const makeRefreshTokens = require("./refreshTokens");
 
 const addPost = makeAddPost(db, crypto, makePost);
-const likePost = makeLikePost(db.like);
+const likePost = makeLikePost(db);
 const getPost = makeGetPost(db.getPost);
 
 const addUser = makeAddUser(makeUser, db, crypto);
