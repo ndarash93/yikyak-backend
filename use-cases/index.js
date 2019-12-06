@@ -4,6 +4,7 @@ const { makePost, makeUser } = require("../entities");
 
 const makeAddPost = require("./addPost");
 const makeLikePost = require("./likePost");
+const makeDislikePost = require('./dislikePost');
 const makeGetPost = require("./getPost");
 
 const makeAddUser = require("./addUser");
@@ -13,6 +14,7 @@ const makeRefreshTokens = require("./refreshTokens");
 
 const addPost = makeAddPost(db, crypto, makePost);
 const likePost = makeLikePost(db);
+const dislikePost = makeDislikePost(db);
 const getPost = makeGetPost(db.getPost);
 
 const addUser = makeAddUser(makeUser, db, crypto);
@@ -24,6 +26,7 @@ module.exports = Object.freeze({
   post: {
     addPost,
     likePost,
+    dislikePost,
     getPost
   },
   user: {

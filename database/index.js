@@ -11,7 +11,9 @@ const verifyPostDisliked = dbFunctions.makeVerifyPostDisliked(User);
 const removePostFromLikes = dbFunctions.makeRemovePostFromLikes(User);
 const removePostFromDislikes = dbFunctions.makeRemovePostFromDislikes(User);
 const addPostToLikes = dbFunctions.makeAddPostToLikes(User);
+const addPostToDislikes = dbFunctions.makeAddPostToDislikes(User);
 const incPostLikes = dbFunctions.makeIncPostLikes(Post);
+const incPostDislikes = dbFunctions.makeIncPostDislikes(Post);
 
 const insertUser = dbFunctions.user.makeInsertUser(User);
 const getUser = dbFunctions.user.makeGetUser(User);
@@ -48,5 +50,7 @@ module.exports = Object.freeze({
   removePostFromLikes,
   removePostFromDislikes,
   addPostToLikes,
-  incPostLikes
+  addPostToDislikes,
+  incPostLikes,
+  incPostDislikes
 });

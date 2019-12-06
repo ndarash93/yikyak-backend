@@ -1,14 +1,14 @@
-module.exports = function makeLikePost(useLikePost) {
+module.exports = function makeDislikePost(useDislikePost) {
   return async function likePost(httpRequest){
     try{
-      const liked = await useLikePost(httpRequest)
+      const disliked = await useDislikePost(httpRequest)
       return {
         headers: {
           'Content-Type': 'application/json',
           'Last-Modified': new Date().toUTCString()
         },
         statusCode: 202,
-        body: { liked }
+        body: { disliked }
       }
     }
     catch (e) {

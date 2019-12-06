@@ -20,7 +20,6 @@ app.get("/get-posts", makeCallBack(controller.post.getPosts));
 
 app.post("/add-user", makeCallBack(controller.user.addUser));
 app.post("/refresh-tokens", makeCallBack(controller.user.refreshTokens));
-//app.post("/refresh-tokens", (req, res) => res.json({ test: "test" }));
 
 app.listen(process.env.API_PORT || process.env.HOST_PORT, () => {
   console.log(

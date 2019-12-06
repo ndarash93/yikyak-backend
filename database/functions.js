@@ -38,32 +38,53 @@ module.exports = function buildMakeFunctions() {
     };
   }
 
+  function makeIncPostDislikes(Post) {
+    return async function incPostDislikes(id, inc) {
+      const post = await Post.findOneAndUpdate(
+        { _id: id },
+        { $inc: { dislikes: inc } },
+        { new: true }
+      );
+      return post;
+    };
+  }
+
   function makeAddPostToLikes(User) {
     return async function addPostToLikes(postId, userId) {
-      return await User.updateOne(
+      return await User.findOneAndUpdate(
         { _id: userId },
-        { new: true },
-        { $push: { likedPosts: postId } }
+        { $push: { likedPosts: postId } },
+        {new: true}
+      );
+    };
+  }
+
+  function makeAddPostToDislikes(User) {
+    return async function addPostToDislikes(postId, userId) {
+      return await User.findOneAndUpdate(
+        { _id: userId },
+        { $push: { dislikedPosts: postId } },
+        {new: true}
       );
     };
   }
 
   function makeRemovePostFromLikes(User) {
     return async function removePostFromLikes(postId, userId) {
-      return await User.updateOne(
+      return await User.findOneAndUpdate(
         { _id: userId },
-        { new: true },
-        { $pull: { likedPosts: postId } }
+        { $pull: { likedPosts: postId } },
+        {new: true}
       );
     };
   }
 
   function makeRemovePostFromDislikes(User) {
     return async function removePostFromDislikes(postId, userId) {
-      return await User.updateOne(
+      return await User.findOneAndUpdate(
         { _id: userId },
-        { new: true },
-        { $pull: { dislikedPosts: postId } }
+        { $pull: { dislikedPosts: postId } },
+        {new: true}
       );
     };
   }
@@ -72,7 +93,7 @@ module.exports = function buildMakeFunctions() {
     return async function verifyPostLiked(postId, userId) {
       const user = await User.findOne({ _id: userId }, ["likedPosts"]);
       const likedPosts = user.likedPosts.filter(likedPost => {
-        return likedPost.post.equals(postId);
+        return likedPost.equals(postId);
       });
       return likedPosts.length ? true : false;
     };
@@ -82,7 +103,7 @@ module.exports = function buildMakeFunctions() {
     return async function verifyPostDisliked(postId, userId) {
       const user = await User.findOne({ _id: userId }, ["dislikedPosts"]);
       const dislikedPosts = user.dislikedPosts.filter(dislikedPost => {
-        return dislikedPost.post.equals(postId);
+        return dislikedPost.equals(postId);
       });
       return dislikedPosts.length ? true : false;
     };
@@ -132,7 +153,9 @@ module.exports = function buildMakeFunctions() {
     makeGetPost,
     makeGetPosts,
     makeIncPostLikes,
+    makeIncPostDislikes,
     makeAddPostToLikes,
+    makeAddPostToDislikes,
     makeVerifyPostLiked,
     makeVerifyPostDisliked,
     makeRemovePostFromLikes,
