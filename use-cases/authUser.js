@@ -5,6 +5,8 @@ module.exports = function makeAuthUser(getUser, compare){
     if(isAuthentic){
       return user;
     }
-    throw new Error('Username or password do not match');
+    const error = new Error('Username or password do not match');
+    error['code'] = 403;
+    throw error;
   }
 }
