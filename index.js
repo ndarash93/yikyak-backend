@@ -1,18 +1,22 @@
-const express = require("express");
+const app = require("express")();
 require("dotenv").config();
 const makeCallBack = require("./express-callback");
 const controller = require("./controllers");
 const { protectRoute } = require("./middleware");
 const bodyParser = require("body-parser");
-const cors = require('cors');
+const cors = require("cors");
 
-const io = require('socket.io')();
-
-const app = express();
 app.use(bodyParser.json());
-app.use(cors({allowHeaders: '*'}));
+app.use(
+  cors({
+    allowHeaders: ["*"],
+    preflightContinue: true,
+    credentials: true,
+    origin: true
+  })
+);
 
-app.options('*', cors());
+app.options("*", cors());
 
 app.post("/add-post", protectRoute, makeCallBack(controller.post.addPost));
 app.post("/like-post", protectRoute, makeCallBack(controller.post.likePost));
@@ -27,15 +31,9 @@ app.get("/get-posts", makeCallBack(controller.post.getPosts));
 app.post("/add-user", makeCallBack(controller.user.addUser));
 app.post("/refresh-tokens", makeCallBack(controller.user.refreshTokens));
 
-app.get('/', cors(), (req, res) => res.json({}));
+app.get("/", cors(), (req, res) => res.json({}));
 
-io.on('connection', (socket) => {
-  socket.on('message', (msg) => {
-    console.log(`Message: `);
-  });
-});
-
-app.listen(process.env.API_PORT || process.env.HOST_PORT, () => {
+const server = app.listen(process.env.API_PORT || process.env.HOST_PORT, () => {
   console.log(
     `Listening internally at ${process.env.INTERNAL_API_HOST}:${process.env
       .API_PORT || process.env.HOST_PORT}`
@@ -44,4 +42,12 @@ app.listen(process.env.API_PORT || process.env.HOST_PORT, () => {
     `Listening on network at ${process.env.EXTERNAL_API_HOST}:${process.env
       .API_PORT || process.env.HOST_PORT}`
   );
+});
+
+const io = require("socket.io")(server);
+
+io.on("connection", socket => {
+  socket.on("message", msg => {
+    socket.broadcast.emit("response", { id: socket.id, message: msg });
+  });
 });
