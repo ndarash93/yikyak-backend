@@ -48,6 +48,6 @@ const io = require("socket.io")(server);
 
 io.on("connection", socket => {
   socket.on("message", msg => {
-    socket.broadcast.emit("response", { id: socket.id, message: msg.message });
+    socket.broadcast.emit("response", { id: socket.id, message: msg.message, timeStamp: new Date() });
   });
 });
