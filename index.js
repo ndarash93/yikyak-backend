@@ -1,4 +1,5 @@
-const app = require("express")();
+const express = require("express");
+const app = express();
 require("dotenv").config();
 const makeCallBack = require("./express-callback");
 const controller = require("./controllers");
@@ -15,6 +16,7 @@ app.use(
     origin: true
   })
 );
+app.use(express.static("./build/"));
 
 app.options("*", cors());
 
@@ -31,7 +33,11 @@ app.get("/get-posts", makeCallBack(controller.post.getPosts));
 app.post("/add-user", makeCallBack(controller.user.addUser));
 app.post("/refresh-tokens", makeCallBack(controller.user.refreshTokens));
 
-app.get("/", (req, res) => res.json({}));
+app.get("/", (req, res) =>
+  res.sendFile(
+    "C:/Users/nmdarash/Documents/Projects/yikyak-clean/build/index.html"
+  )
+);
 
 const server = app.listen(process.env.API_PORT || process.env.HOST_PORT, () => {
   console.log(
@@ -48,6 +54,10 @@ const io = require("socket.io")(server);
 
 io.on("connection", socket => {
   socket.on("message", msg => {
-    socket.broadcast.emit("response", { id: socket.id, message: msg.message, timeStamp: new Date() });
+    socket.broadcast.emit("response", {
+      id: socket.id,
+      message: msg.message,
+      timeStamp: new Date()
+    });
   });
 });

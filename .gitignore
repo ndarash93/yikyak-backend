@@ -4,3 +4,6 @@ server.key
 *.log
 *.env
 *.log
+
+# production
+/build
